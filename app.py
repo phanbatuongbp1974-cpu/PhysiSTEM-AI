@@ -4,7 +4,6 @@ import re
 from pathlib import Path
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 st.set_page_config(
     page_title="PhysiSTEM AI • Học Vật lí KNTT 6–9",
@@ -80,6 +79,11 @@ if html_path.exists():
     # Đưa key từ secrets.toml vào trang để chatbot dùng luôn, không cần nhập tay
     keys_js = ",".join(json.dumps(k) for k in get_keys())
     html = html.replace("[/*KEYS*/]", "[" + keys_js + "]", 1)
-    components.html(html, height=1000, scrolling=True)
+    if hasattr(st, "iframe"):
+        # Streamlit mới: st.components.v1.html đã bị thay bằng st.iframe
+        st.iframe(html, height=1000)
+    else:
+        import streamlit.components.v1 as components
+        components.html(html, height=1000, scrolling=True)
 else:
     st.error(f"⚠️ Không tìm thấy tệp `index.html` tại: {html_path}")
